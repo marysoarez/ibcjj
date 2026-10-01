@@ -83,3 +83,9 @@ a nova configuração de assinatura no Gradle real.
 
 Veja [a revisão das dependências](docs/dependency-baseline.md) e
 [o registro da preparação](docs/secure-baseline.md).
+
+## Contrato de usuários
+
+Leia [o contrato de dados e sua compatibilidade](docs/user-data-contract.md).
+Os testes específicos de cadastro, leitura, foto e conversão podem ser executados
+com `flutter test --no-pub test/models test/viewmodels`.
