@@ -29,8 +29,11 @@ Datas continuam como texto, sem alteração do formato existente nesta etapa.
   Sempre começam com `ativacao: pendente` e sem URL de foto, mesmo que o chamador
   forneça ativação ou foto. Os demais dados do formulário são preservados.
 - Ativações de documentos existentes são preservadas na leitura.
-- Documento inexistente retorna perfil mínimo em memória. A leitura não cria
-  documentos nem altera o banco automaticamente.
+- O modelo aceita mapas inexistentes e incompletos com os padrões acima.
+  O repositório distingue documento inexistente retornando `null`; a autenticação
+  oferece completar o perfil, preservando a sessão. A leitura não altera o banco.
+- A criação do perfil usa uma transação. Se um documento já existir, os dados
+  existentes são retornados, evitando redefinir ativação em tentativas repetidas.
 - A foto usa uma gravação com merge de `uid` e `profileImageUrl`, preservando
   ativação, dados pessoais e campos adicionais. Se o documento não existir, esse
   merge cria um documento parcial; os demais campos recebem padrões na leitura.
@@ -46,14 +49,14 @@ A validação de ano da carteirinha na interface permanece fora desta etapa.
 ## Testes
 
 ```powershell
-flutter test --no-pub test/models test/viewmodels
+flutter test --no-pub test/models test/repositories test/viewmodels
 ```
 
-São 24 testes para conversão, campos incompletos, tipos inválidos, dados legados,
+Os testes cobrem conversão, campos incompletos, tipos inválidos, dados legados,
 cadastro, coleção de destino, merge da foto e falha de persistência. Os testes
 de fluxo usam doubles locais das interfaces Firebase e ImagePicker; não acessam
 a rede e não validam regras de segurança publicadas ou transações do SDK real.
 
 Nenhuma atualização de pacote foi necessária. `pubspec.yaml` e `pubspec.lock`
-foram preservados. O teste antigo do contador em `test/widget_test.dart` continua
-falhando na suíte completa e permanece para a etapa de revisão das telas/testes.
+foram preservados. O teste antigo do contador em `test/widget_test.dart` foi
+substituído por testes de inicialização e navegação por sessão.

@@ -73,9 +73,11 @@ flutter analyze --no-pub
 flutter test --no-pub
 ```
 
-O diagnóstico inicial encontrou 152 apontamentos do analyzer e falha no único
-teste, ainda referente ao contador do template. A base segura não corrige esses
-fluxos. A configuração Android também contém carregamento legado de plugins em
+O teste de contador foi substituído por testes reais de inicialização, sessão,
+repositórios e navegação. A arquitetura está documentada em
+[arquitetura e autenticação](docs/architecture.md).
+
+A configuração Android ainda contém carregamento legado de plugins em
 `android/settings.gradle`: a verificação `gradlew help` confirmou que o Flutter
 instalado rejeita esse método. É necessário migrar o carregamento de plugins em
 uma próxima etapa antes de executar/buildar Android. Isso também impediu validar
@@ -88,4 +90,4 @@ Veja [a revisão das dependências](docs/dependency-baseline.md) e
 
 Leia [o contrato de dados e sua compatibilidade](docs/user-data-contract.md).
 Os testes específicos de cadastro, leitura, foto e conversão podem ser executados
-com `flutter test --no-pub test/models test/viewmodels`.
+com `flutter test --no-pub test/models test/repositories test/viewmodels`.

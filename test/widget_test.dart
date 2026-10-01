@@ -1,30 +1,89 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:ibcjj_flutter/main.dart';
+import 'package:ibcjj_flutter/app/app.dart';
+import 'package:ibcjj_flutter/app/bootstrap.dart';
+import 'package:ibcjj_flutter/features/auth/presentation/auth_view_model.dart';
+import 'package:ibcjj_flutter/features/certificates/presentation/certificates_page.dart';
+import 'package:provider/provider.dart';
+import 'support/repository_fakes.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget( MyApp());
+  testWidgets('bootstrap failure does not create the app or expose raw errors',
+      (tester) async {
+    var created = false;
+    final widget = await bootstrap(
+      initialize: () async => throw StateError('private backend detail'),
+      createApp: () {
+        created = true;
+        return const SizedBox();
+      },
+    );
+    await tester.pumpWidget(widget);
+    expect(created, isFalse);
+    expect(find.textContaining('Não foi possível iniciar'), findsOneWidget);
+    expect(find.textContaining('private backend detail'), findsNothing);
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets(
+      'bootstrap initializes once and widget rebuilds do not initialize',
+      (tester) async {
+    var calls = 0;
+    final widget = await bootstrap(
+      initialize: () async {
+        calls++;
+      },
+      createApp: () => const MaterialApp(home: Text('Ready')),
+    );
+    await tester.pumpWidget(widget);
+    await tester.pumpWidget(widget);
+    expect(calls, 1);
+    expect(find.text('Ready'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('session gate clears protected routes after logout',
+      (tester) async {
+    final auth = FakeAuthRepository();
+    await tester.pumpWidget(IbcjjApp(
+        authRepository: auth,
+        profileRepository: FakeProfileRepository(),
+        certificatesRepository: FakeCertificatesRepository()));
+    auth.controller.add(testSession);
+    await tester.pumpAndSettle();
+    expect(find.text('Carteirinha do Atleta'), findsOneWidget);
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Certificados'));
+    await tester.pumpAndSettle();
+    expect(find.byType(CertificatesPage), findsOneWidget);
+    auth.controller.add(null);
+    await tester.pumpAndSettle();
+    expect(find.text('Entrar'), findsOneWidget);
+    expect(find.byType(CertificatesPage), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await auth.controller.close();
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('partial registration shows retry rather than login failure',
+      (tester) async {
+    final auth = FakeAuthRepository();
+    final profiles = FakeProfileRepository()..saveError = StateError('offline');
+    await tester.pumpWidget(IbcjjApp(
+        authRepository: auth,
+        profileRepository: profiles,
+        certificatesRepository: FakeCertificatesRepository()));
+    auth.controller.add(null);
+    await tester.pumpAndSettle();
+    final model = tester.element(find.text('Entrar')).read<AuthViewModel>();
+    await model.register('ana@example.com', 'password', testProfile());
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Sua conta foi criada'), findsOneWidget);
+    expect(find.text('Salvar perfil novamente'), findsOneWidget);
+    profiles.saveError = null;
+    await tester.tap(find.text('Salvar perfil novamente'));
+    await tester.pumpAndSettle();
+    expect(auth.registerCalls, 1);
+    expect(find.text('Carteirinha do Atleta'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await auth.controller.close();
   });
 }
