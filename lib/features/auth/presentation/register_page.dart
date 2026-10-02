@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../profile/models/user_model.dart';
 import 'auth_view_model.dart';
+import '../../../core/validation/form_validators.dart';
 
 class RegisterPage extends StatefulWidget {
   final bool completingProfile;
@@ -88,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _submit(AuthViewModel auth) async {
-    if (!_form.currentState!.validate()) return;
+    if (auth.busy || !_form.currentState!.validate()) return;
     final profile = UserModel(
       email: _email.text.trim(),
       nome: _nome.text.trim(),
@@ -121,8 +122,16 @@ class _RegisterPageState extends State<RegisterPage> {
           keyboardType: keyboard,
           obscureText: obscure,
           decoration: InputDecoration(labelText: label),
-          validator: (value) =>
-              value == null || value.trim().isEmpty ? 'Preencha $label' : null);
+          validator: (value) {
+            if (controller == _password) {
+              return FormValidators.newPassword(value);
+            }
+            if (controller == _email) return FormValidators.email(value);
+            if (controller == _telefone) return FormValidators.phone(value);
+            if (controller == _peso) return FormValidators.weight(value);
+            if (controller == _graduacao) return FormValidators.grade(value);
+            return FormValidators.requiredText(value, label);
+          });
 
   @override
   Widget build(BuildContext context) {

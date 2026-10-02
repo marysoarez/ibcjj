@@ -19,6 +19,9 @@ class UserProfilePage extends StatelessWidget {
       appBar: AppBar(title: const Text('Carteirinha do Atleta')),
       body: Column(children: [
         if (model.busy) const LinearProgressIndicator(),
+        if (model.message != null)
+          Padding(
+              padding: const EdgeInsets.all(12), child: Text(model.message!)),
         if (model.error != null)
           Padding(
               padding: const EdgeInsets.all(12),

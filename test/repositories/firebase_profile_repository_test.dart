@@ -1,139 +1,29 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ibcjj_flutter/features/auth/data/auth_repository.dart';
 import 'package:ibcjj_flutter/features/profile/models/user_model.dart';
 import 'package:ibcjj_flutter/features/profile/data/firebase_profile_repository.dart';
-
-// SDK doubles used only to verify paths, payloads and merge behavior.
-class MemoryFirestore extends Fake implements FirebaseFirestore {
-  final documents = <String, Map<String, dynamic>>{};
-  final paths = <String>[];
-  bool failWrites = false;
-  @override
-  CollectionReference<Map<String, dynamic>> collection(String path) {
-    paths.add(path);
-    return MemoryCollection(this, path);
-  }
-
-  @override
-  Future<T> runTransaction<T>(
-    TransactionHandler<T> handler, {
-    Duration timeout = const Duration(seconds: 30),
-    int maxAttempts = 5,
-  }) =>
-      handler(MemoryTransaction(this));
-}
-
-// ignore: subtype_of_sealed_class
-class MemoryCollection extends Fake
-    implements CollectionReference<Map<String, dynamic>> {
-  final MemoryFirestore store;
-  @override
-  final String path;
-  MemoryCollection(this.store, this.path);
-  @override
-  DocumentReference<Map<String, dynamic>> doc([String? path]) =>
-      MemoryDocument(store, '${this.path}/$path');
-}
-
-// ignore: subtype_of_sealed_class
-class MemoryDocument extends Fake
-    implements DocumentReference<Map<String, dynamic>> {
-  final MemoryFirestore store;
-  @override
-  final String path;
-  MemoryDocument(this.store, this.path);
-  @override
-  Future<DocumentSnapshot<Map<String, dynamic>>> get(
-          [GetOptions? options]) async =>
-      MemorySnapshot(store.documents[path]);
-  @override
-  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
-    if (store.failWrites) throw StateError('Write failed');
-    store.documents[path] = {
-      if (options?.merge == true) ...?store.documents[path],
-      ...data
-    };
-  }
-}
-
-// ignore: subtype_of_sealed_class
-class MemorySnapshot extends Fake
-    implements DocumentSnapshot<Map<String, dynamic>> {
-  final Map<String, dynamic>? value;
-  MemorySnapshot(this.value);
-  @override
-  Map<String, dynamic>? data() => value;
-}
-
-class MemoryTransaction extends Fake implements Transaction {
-  final MemoryFirestore store;
-  MemoryTransaction(this.store);
-  @override
-  Future<DocumentSnapshot<T>> get<T extends Object?>(
-          DocumentReference<T> reference) =>
-      reference.get();
-  @override
-  Transaction set<T>(DocumentReference<T> reference, T data,
-      [SetOptions? options]) {
-    if (store.failWrites) throw StateError('Write failed');
-    store.documents[reference.path] = Map<String, dynamic>.from(data as Map);
-    return this;
-  }
-}
-
-class TestStorage extends Fake implements FirebaseStorage {
-  final paths = <String?>[];
-  @override
-  Reference ref([String? path]) {
-    paths.add(path);
-    return TestReference();
-  }
-}
-
-class TestReference extends Fake implements Reference {
-  @override
-  Future<String> getDownloadURL() async => 'https://example.com/profile.jpg';
-  @override
-  UploadTask putData(Uint8List data, [SettableMetadata? metadata]) =>
-      TestUpload();
-}
-
-class TestSnapshot extends Fake implements TaskSnapshot {}
-
-class TestUpload extends Fake implements UploadTask {
-  @override
-  Future<T> then<T>(FutureOr<T> Function(TaskSnapshot) onValue,
-          {Function? onError}) =>
-      Future<TaskSnapshot>.value(TestSnapshot())
-          .then(onValue, onError: onError);
-}
-
-class TestPicker extends Fake implements ImagePicker {
-  @override
-  Future<XFile?> pickImage(
-          {required ImageSource source,
-          double? maxWidth,
-          double? maxHeight,
-          int? imageQuality,
-          CameraDevice preferredCameraDevice = CameraDevice.rear,
-          bool requestFullMetadata = true}) async =>
-      XFile.fromData(Uint8List.fromList([1, 2, 3]), name: 'test.jpg');
-}
+import 'package:ibcjj_flutter/core/data/session_guard.dart';
+import 'package:ibcjj_flutter/core/errors/app_failure.dart';
+import '../support/firebase_doubles.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   const session = AuthSession('auth-uid', 'auth@example.com');
   late MemoryFirestore store;
   late TestStorage storage;
   late FirebaseProfileRepository repository;
+  late TestPicker picker;
+  String? currentUid;
   setUp(() {
     store = MemoryFirestore();
     storage = TestStorage();
-    repository = FirebaseProfileRepository(store, storage, TestPicker());
+    currentUid = session.uid;
+    picker = TestPicker();
+    repository = FirebaseProfileRepository(store, storage, picker,
+        sessionGuard: SessionGuard(() => currentUid));
   });
 
   test('missing profile is explicit and does not write to Firestore', () async {
@@ -214,9 +104,58 @@ void main() {
   test('failed persistence is propagated instead of reporting success',
       () async {
     store.failWrites = true;
-    await expectLater(repository.updatePhoto(session.uid), throwsStateError);
     await expectLater(
-        repository.saveRegistration(session, UserModel()), throwsStateError);
+        repository.updatePhoto(session.uid),
+        throwsA(isA<AppFailure>()
+            .having((e) => e.code, 'stage', 'photo-document')));
+    await expectLater(repository.saveRegistration(session, UserModel()),
+        throwsA(isA<AppFailure>()));
     expect(store.documents, isEmpty);
+  });
+
+  test('missing photo is normal, but permission failure is visible', () async {
+    store.documents['Usuarios/auth-uid'] = {'nome': 'Ana'};
+    storage.downloadError =
+        FirebaseException(plugin: 'storage', code: 'object-not-found');
+    expect((await repository.fetch(session))!.profileImageUrl, isNull);
+    storage.downloadError =
+        FirebaseException(plugin: 'storage', code: 'unauthorized');
+    await expectLater(repository.fetch(session), throwsA(isA<AppFailure>()));
+  });
+
+  test('upload failure is distinct from document failure and saves no URL',
+      () async {
+    storage.uploadError = StateError('offline');
+    await expectLater(
+        repository.updatePhoto(session.uid),
+        throwsA(
+            isA<AppFailure>().having((e) => e.code, 'stage', 'photo-upload')));
+    expect(store.documents, isEmpty);
+  });
+
+  test('session required before any read or upload', () async {
+    currentUid = null;
+    await expectLater(repository.fetch(session), throwsA(isA<AppFailure>()));
+    await expectLater(
+        repository.updatePhoto(session.uid), throwsA(isA<AppFailure>()));
+    expect(store.paths, isEmpty);
+    expect(storage.paths, isEmpty);
+  });
+
+  test('session change during selection prevents upload', () async {
+    picker.onPick = () async {
+      currentUid = 'other-user';
+      return XFile.fromData(await File('assets/icon/icon.png').readAsBytes());
+    };
+    await expectLater(
+        repository.updatePhoto(session.uid),
+        throwsA(isA<AppFailure>()
+            .having((e) => e.code, 'code', 'session-expired')));
+    expect(storage.paths, isEmpty);
+  });
+
+  test('real content type is sent to Storage', () async {
+    await repository.updatePhoto(session.uid);
+    expect(storage.contentType, 'image/png');
   });
 }

@@ -8,22 +8,26 @@ import '../features/profile/data/profile_repository.dart';
 import '../features/profile/presentation/profile_view_model.dart';
 import '../features/profile/presentation/user_profile_page.dart';
 import '../features/certificates/data/certificates_repository.dart';
+import '../features/certificates/data/activation_contact.dart';
 
 class IbcjjApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProfileRepository profileRepository;
   final CertificatesRepository certificatesRepository;
+  final ActivationContact activationContact;
   const IbcjjApp(
       {super.key,
       required this.authRepository,
       required this.profileRepository,
-      required this.certificatesRepository});
+      required this.certificatesRepository,
+      this.activationContact = const WhatsAppActivationContact()});
 
   @override
   Widget build(BuildContext context) => MultiProvider(
         providers: [
           Provider<ProfileRepository>.value(value: profileRepository),
           Provider<CertificatesRepository>.value(value: certificatesRepository),
+          Provider<ActivationContact>.value(value: activationContact),
           ChangeNotifierProvider(
               create: (_) => AuthViewModel(authRepository, profileRepository)),
         ],

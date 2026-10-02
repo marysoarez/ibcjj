@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'auth_view_model.dart';
 import 'register_page.dart';
 import 'reset_password_page.dart';
+import '../../../core/validation/form_validators.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -40,17 +41,13 @@ class _LoginPageState extends State<LoginPage> {
                   enabled: !auth.busy,
                   decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) => value == null || value.trim().isEmpty
-                      ? 'Informe seu email'
-                      : null),
+                  validator: FormValidators.email),
               TextFormField(
                   controller: _password,
                   enabled: !auth.busy,
                   obscureText: true,
                   decoration: const InputDecoration(labelText: 'Senha'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Informe sua senha'
-                      : null),
+                  validator: FormValidators.loginPassword),
               const SizedBox(height: 16),
               if (auth.error != null)
                 Text(auth.error!, style: const TextStyle(color: Colors.red)),

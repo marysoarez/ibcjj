@@ -19,6 +19,8 @@ class FakeAuthRepository implements AuthRepository {
   Object? registerError;
   Object? logoutError;
   Object? resetError;
+  Completer<void>? resetCompleter;
+  int resetCalls = 0;
   @override
   Stream<AuthSession?> get sessionChanges => controller.stream;
   @override
@@ -47,6 +49,8 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> resetPassword(String email) async {
+    resetCalls++;
+    if (resetCompleter != null) await resetCompleter!.future;
     if (resetError != null) throw resetError!;
   }
 }
@@ -56,6 +60,8 @@ class FakeProfileRepository implements ProfileRepository {
   Object? fetchError;
   Object? saveError;
   Object? photoError;
+  Completer<String?>? photoCompleter;
+  int photoCalls = 0;
   int saves = 0;
   int fetches = 0;
   Completer<UserModel?>? fetchCompleter;
@@ -78,6 +84,8 @@ class FakeProfileRepository implements ProfileRepository {
 
   @override
   Future<String?> updatePhoto(String uid) async {
+    photoCalls++;
+    if (photoCompleter != null) return photoCompleter!.future;
     if (photoError != null) throw photoError!;
     return 'https://example.com/new.jpg';
   }
@@ -87,6 +95,8 @@ class FakeCertificatesRepository implements CertificatesRepository {
   List<Certificate> values = [];
   Object? error;
   bool cancelled = false;
+  Completer<bool>? addCompleter;
+  int addCalls = 0;
   @override
   Future<List<Certificate>> list(String uid) async {
     if (error != null) throw error!;
@@ -95,6 +105,8 @@ class FakeCertificatesRepository implements CertificatesRepository {
 
   @override
   Future<bool> add(String uid) async {
+    addCalls++;
+    if (addCompleter != null) return addCompleter!.future;
     if (error != null) throw error!;
     if (cancelled) return false;
     values.add(const Certificate(

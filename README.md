@@ -88,6 +88,9 @@ Veja [a revisão das dependências](docs/dependency-baseline.md) e
 
 ## Contrato de usuários
 
+As validações, limites de imagem e integração WhatsApp estão descritos em
+[telas, arquivos e operações assíncronas](docs/files-and-async.md).
+
 Leia [o contrato de dados e sua compatibilidade](docs/user-data-contract.md).
 Os testes específicos de cadastro, leitura, foto e conversão podem ser executados
 com `flutter test --no-pub test/models test/repositories test/viewmodels`.

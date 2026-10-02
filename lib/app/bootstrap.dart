@@ -9,6 +9,7 @@ import '../features/auth/data/firebase_auth_repository.dart';
 import '../features/profile/data/firebase_profile_repository.dart';
 import '../features/certificates/data/firebase_certificates_repository.dart';
 import 'app.dart';
+import '../core/data/session_guard.dart';
 
 /// Kept separate from widget builds so rebuilds never reinitialize Firebase.
 Future<Widget> bootstrap({
@@ -30,11 +31,15 @@ Future<void> _initializeFirebase() async {
 Widget _createApp() {
   final storage = FirebaseStorage.instance;
   final picker = ImagePicker();
+  final auth = FirebaseAuth.instance;
+  final sessionGuard = SessionGuard(() => auth.currentUser?.uid);
   return IbcjjApp(
-    authRepository: FirebaseAuthRepository(FirebaseAuth.instance),
-    profileRepository:
-        FirebaseProfileRepository(FirebaseFirestore.instance, storage, picker),
-    certificatesRepository: FirebaseCertificatesRepository(storage, picker),
+    authRepository: FirebaseAuthRepository(auth),
+    profileRepository: FirebaseProfileRepository(
+        FirebaseFirestore.instance, storage, picker,
+        sessionGuard: sessionGuard),
+    certificatesRepository: FirebaseCertificatesRepository(storage, picker,
+        sessionGuard: sessionGuard),
   );
 }
 

@@ -8,6 +8,7 @@ class ProfileViewModel extends ChangeNotifier {
   UserModel _user;
   bool busy = false;
   String? error;
+  String? message;
   bool _disposed = false;
   ProfileViewModel(this._repository, this._user);
 
@@ -15,14 +16,16 @@ class ProfileViewModel extends ChangeNotifier {
   String? get profileImageUrl => _user.profileImageUrl;
 
   Future<void> editProfileImage() async {
-    if (busy) return;
+    if (busy || _disposed) return;
     busy = true;
     error = null;
+    message = null;
     notifyListeners();
     try {
-      final url = await _repository.updatePhoto(_user.uid!);
+      final url = await _repository.updatePhoto(_user.uid ?? '');
       if (!_disposed && url != null) {
         _user = UserModel.fromMap({..._user.toMap(), 'profileImageUrl': url});
+        message = 'Foto atualizada.';
       }
     } catch (failure) {
       if (!_disposed) {

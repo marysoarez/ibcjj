@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/errors/app_failure.dart';
 import 'auth_view_model.dart';
+import '../../../core/validation/form_validators.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -22,7 +23,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   Future<void> _submit() async {
-    if (!_form.currentState!.validate()) return;
+    if (_busy || !_form.currentState!.validate()) return;
     final auth = context.read<AuthViewModel>();
     setState(() {
       _busy = true;
@@ -47,7 +48,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text('Redefinir Senha')),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Form(
               key: _form,
@@ -57,9 +58,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     enabled: !_busy,
                     decoration: const InputDecoration(labelText: 'Email'),
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) => value == null || value.trim().isEmpty
-                        ? 'Informe seu email'
-                        : null),
+                    validator: FormValidators.email),
                 if (_message != null) Text(_message!),
                 if (_busy) const LinearProgressIndicator(),
                 ElevatedButton(

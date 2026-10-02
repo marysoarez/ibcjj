@@ -46,9 +46,10 @@ autenticação, leitura de perfil, gravação parcial de cadastro, sessão e log
 `CertificatesViewModel` coordena listagem, seleção/upload e exclusão para um UID
 fixado quando a tela é aberta. Os arquivos continuam nos caminhos existentes.
 
-A tentativa de envio via WhatsApp era um protótipo com token incompleto e mensagem
-de teste. Foi removida; o botão está desabilitado e explica a indisponibilidade.
-Nenhum serviço real de ativação foi criado nesta etapa.
+A tentativa de envio via WhatsApp foi substituída por abertura de conversa externa,
+sem token ou envio automático. O serviço é injetado no view model de certificados.
+Veja [telas e arquivos](files-and-async.md) para limites de imagem, proteção de sessão
+e os limites da revisão das regras Firebase.
 
 ## Código removido
 
