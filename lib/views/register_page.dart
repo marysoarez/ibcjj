@@ -128,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Cadastro realizado com sucesso!'),
             backgroundColor: Colors.green,
           ),
@@ -168,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro'),
+        title: const Text('Registro'),
       ),
       body: SafeArea(
         child: Padding(
@@ -180,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   TextFormField(
                     controller: _emailController,
-                    decoration: InputDecoration(labelText: 'Email'),
+                    decoration: const InputDecoration(labelText: 'Email'),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -191,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Senha'),
+                    decoration: const InputDecoration(labelText: 'Senha'),
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _nomeController,
-                    decoration: InputDecoration(labelText: 'Nome'),
+                    decoration: const InputDecoration(labelText: 'Nome'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, insira seu nome';
@@ -212,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _telefoneController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: 'Telefone (Formato: (xx) xxxxx-xxxx)'),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
@@ -224,13 +224,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _docController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Documento (opcional)',
                     ),
                   ),
                   TextFormField(
                     controller: _equipeController,
-                    decoration: InputDecoration(labelText: 'Equipe'),
+                    decoration: const InputDecoration(labelText: 'Equipe'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, insira sua equipe';
@@ -240,12 +240,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _tecnicoController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Professor ou técnico (opcional)',
                     ),
                   ),
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(labelText: 'Faixa'),
+                    decoration: const InputDecoration(labelText: 'Faixa'),
                     initialValue: _faixa,
                     onChanged: (newValue) {
                       setState(() {
@@ -267,7 +267,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _graduacaoController,
-                    decoration: InputDecoration(labelText: 'Graduação'),
+                    decoration: const InputDecoration(labelText: 'Graduação'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, insira sua graduação';
@@ -276,7 +276,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(labelText: 'Gênero'),
+                    decoration: const InputDecoration(labelText: 'Gênero'),
                     initialValue: _genero,
                     onChanged: (newValue) {
                       setState(() {
@@ -298,7 +298,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     decoration:
-                        InputDecoration(labelText: 'Data de Nascimento'),
+                        const InputDecoration(labelText: 'Data de Nascimento'),
                     readOnly: true,
                     onTap: () => _selectDate(context),
                     controller: TextEditingController(
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   TextFormField(
                     controller: _pesoController,
-                    decoration: InputDecoration(labelText: 'Peso (kg)'),
+                    decoration: const InputDecoration(labelText: 'Peso (kg)'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -323,10 +323,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => _register(authViewModel),
-                    child: Text('Cadastrar'),
+                    child: const Text('Cadastrar'),
                   ),
                 ],
               ),

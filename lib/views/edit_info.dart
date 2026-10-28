@@ -92,7 +92,7 @@ class _EditPageState extends State<EditPage> {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text('Dados atualizados com sucesso!'),
               backgroundColor: Colors.green),
         );
@@ -114,7 +114,7 @@ class _EditPageState extends State<EditPage> {
     final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Editar Perfil')),
+      appBar: AppBar(title: const Text('Editar Perfil')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -125,14 +125,14 @@ class _EditPageState extends State<EditPage> {
                 children: [
                   TextFormField(
                     controller: _nomeController,
-                    decoration: InputDecoration(labelText: 'Nome'),
+                    decoration: const InputDecoration(labelText: 'Nome'),
                     validator: (value) => value == null || value.isEmpty
                         ? 'Informe seu nome'
                         : null,
                   ),
                   TextFormField(
                     controller: _telefoneController,
-                    decoration: InputDecoration(labelText: 'Telefone'),
+                    decoration: const InputDecoration(labelText: 'Telefone'),
                     keyboardType: TextInputType.phone,
                     validator: (value) => value == null || value.isEmpty
                         ? 'Informe seu telefone'
@@ -140,14 +140,14 @@ class _EditPageState extends State<EditPage> {
                   ),
                   TextFormField(
                     controller: _equipeController,
-                    decoration: InputDecoration(labelText: 'Equipe'),
+                    decoration: const InputDecoration(labelText: 'Equipe'),
                   ),
                   TextFormField(
                     controller: _graduacaoController,
-                    decoration: InputDecoration(labelText: 'Graduação'),
+                    decoration: const InputDecoration(labelText: 'Graduação'),
                   ),
                   DropdownButtonFormField<String>(
-                    decoration: InputDecoration(labelText: 'Gênero'),
+                    decoration: const InputDecoration(labelText: 'Gênero'),
                     initialValue: _genero,
                     onChanged: (newValue) => setState(() => _genero = newValue),
                     items: _generos.map((genero) {
@@ -159,7 +159,7 @@ class _EditPageState extends State<EditPage> {
                   ),
                   TextFormField(
                     decoration:
-                        InputDecoration(labelText: 'Data de Nascimento'),
+                        const InputDecoration(labelText: 'Data de Nascimento'),
                     readOnly: true,
                     onTap: () => _selectDate(context),
                     controller: TextEditingController(
@@ -170,22 +170,22 @@ class _EditPageState extends State<EditPage> {
                   ),
                   TextFormField(
                     controller: _pesoController,
-                    decoration: InputDecoration(labelText: 'Peso (kg)'),
+                    decoration: const InputDecoration(labelText: 'Peso (kg)'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     // Novo campo técnico
                     controller: _tecnicoController,
-                    decoration: InputDecoration(labelText: 'Técnico'),
+                    decoration: const InputDecoration(labelText: 'Técnico'),
                   ),
                   ElevatedButton(
                     onPressed: () => authViewModel.editProfileImage(),
-                    child: Text('Editar Foto de Perfil'),
+                    child: const Text('Editar Foto de Perfil'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => _saveChanges(authViewModel),
-                    child: Text('Salvar Alterações'),
+                    child: const Text('Salvar Alterações'),
                   ),
                 ],
               ),

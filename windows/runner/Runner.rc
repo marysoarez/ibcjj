@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.marysoarez" "\0"
-            VALUE "FileDescription", "final_ibcjj" "\0"
+            VALUE "FileDescription", "ibcjj_flutter" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "final_ibcjj" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.marysoarez. All rights reserved." "\0"
-            VALUE "OriginalFilename", "final_ibcjj.exe" "\0"
-            VALUE "ProductName", "final_ibcjj" "\0"
+            VALUE "InternalName", "ibcjj_flutter" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.marysoarez. All rights reserved." "\0"
+            VALUE "OriginalFilename", "ibcjj_flutter.exe" "\0"
+            VALUE "ProductName", "ibcjj_flutter" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

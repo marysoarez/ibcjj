@@ -1,0 +1,6 @@
+# Copy to android/key.properties and fill in locally. Never commit real values.
+# Use forward slashes. Relative paths are resolved from android/.
+storeFile=C:/secure/ibcjj-release.jks
+storePassword=REPLACE_LOCALLY
+keyAlias=REPLACE_LOCALLY
+keyPassword=REPLACE_LOCALLY

@@ -5,8 +5,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../data/api/api_client.dart';
-import '../domain/card_access_policy.dart';
 import '../model/user_model.dart';
 
 class AuthViewModel with ChangeNotifier {
@@ -15,14 +13,8 @@ class AuthViewModel with ChangeNotifier {
   final FirebaseFunctions _functions = FirebaseFunctions.instanceFor(
     region: 'southamerica-east1',
   );
-  final ApiClient? _apiClient;
 
-  AuthViewModel({ApiClient? apiClient})
-      : _apiClient = apiClient ??
-            ApiClient.fromEnvironment(
-              getIdToken: () async =>
-                  FirebaseAuth.instance.currentUser?.getIdToken(),
-            ) {
+  AuthViewModel() {
     _checkUserLoggedIn(); // Verifica se o usuário já está logado
   }
 
@@ -44,14 +36,10 @@ class AuthViewModel with ChangeNotifier {
   UserModel? _user;
   String? _profileImageBase64;
   bool _isRestoringSession = true;
-  CardAccessDecision? _apiCardAccess;
-  String? _apiErrorMessage;
 
   UserModel? get user => _user;
   String? get profileImageBase64 => _profileImageBase64;
   bool get isRestoringSession => _isRestoringSession;
-  CardAccessDecision? get apiCardAccess => _apiCardAccess;
-  String? get apiErrorMessage => _apiErrorMessage;
 
   // Converte FirebaseUser para UserModel
   UserModel? _userFromFirebase(User? user) {
@@ -60,58 +48,21 @@ class AuthViewModel with ChangeNotifier {
 
   // Função para obter dados do Firestore
   Future<void> fetchUserData() async {
-    final currentUser = _auth.currentUser;
-    if (currentUser == null) return;
-
-    UserModel? apiProfile;
-    CardAccessDecision? apiAccess;
-    _apiErrorMessage = null;
-    _apiCardAccess = null;
-
-    if (_apiClient != null) {
-      try {
-        final response = await _apiClient.getMe();
-        if (response.uid != currentUser.uid) {
-          throw const ApiException(
-            'A API retornou um perfil diferente da sessão autenticada.',
-            statusCode: 502,
-          );
-        }
-        apiProfile = response.toUserModel();
-
-        try {
-          final access = await _apiClient.getCardAccess(app: 'ibcjj');
-          apiAccess = CardAccessDecision(
-            allowed: access.allowed,
-            message: access.message,
-          );
-        } on ApiException catch (error) {
-          _apiErrorMessage = error.message;
-        } catch (_) {
-          _apiErrorMessage = 'Não foi possível consultar a autorização da API.';
-        }
-      } on ApiException catch (error) {
-        _apiErrorMessage = error.message;
-      } catch (_) {
-        _apiErrorMessage = 'Não foi possível consultar a API.';
-      }
-    }
-
-    UserModel? firestoreProfile;
     try {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('Usuarios').doc(currentUser.uid).get();
-      final data = userDoc.data();
-      firestoreProfile = data is Map<String, dynamic>
-          ? UserModel.fromFirestore(data)
-          : _userFromFirebase(currentUser);
+      User? currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        DocumentSnapshot userDoc =
+            await _firestore.collection('Usuarios').doc(currentUser.uid).get();
+        final data = userDoc.data();
+        _user = data is Map<String, dynamic>
+            ? UserModel.fromFirestore(data)
+            : _userFromFirebase(currentUser);
+        notifyListeners();
+      }
     } catch (_) {
-      // Mantém a sessão disponível durante falhas temporárias de rede.
+      _user = _userFromFirebase(_auth.currentUser);
+      notifyListeners();
     }
-
-    _user = apiProfile ?? firestoreProfile ?? _userFromFirebase(currentUser);
-    _apiCardAccess = apiProfile == null ? null : apiAccess;
-    notifyListeners();
   }
 
   // Login
@@ -286,11 +237,5 @@ class AuthViewModel with ChangeNotifier {
     } catch (e) {
       throw Exception("Erro ao atualizar usuário: $e");
     }
-  }
-
-  @override
-  void dispose() {
-    _apiClient?.close();
-    super.dispose();
   }
 }

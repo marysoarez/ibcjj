@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:final_ibcjj/views/certificates_page.dart';
-import 'package:final_ibcjj/views/edit_info.dart';
-import 'package:final_ibcjj/views/delete_account_page.dart';
+import 'package:ibcjj_flutter/views/certificates_page.dart';
+import 'package:ibcjj_flutter/views/edit_info.dart';
+import 'package:ibcjj_flutter/views/delete_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/auth_view_model.dart';
@@ -65,7 +65,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CertificatesPage()),
+                MaterialPageRoute(builder: (context) => const CertificatesPage()),
               );
             },
           ),

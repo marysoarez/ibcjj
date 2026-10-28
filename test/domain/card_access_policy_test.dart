@@ -1,5 +1,5 @@
-import 'package:final_ibcjj/domain/card_access_policy.dart';
-import 'package:final_ibcjj/model/user_model.dart';
+import 'package:ibcjj_flutter/domain/card_access_policy.dart';
+import 'package:ibcjj_flutter/model/user_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,9 +18,9 @@ void main() {
   });
 
   test('acesso vitalício ainda respeita os aplicativos liberados', () {
-    final user = UserModel(
+    const user = UserModel(
       acessoVitalicio: true,
-      appsCarteira: const ['cbjjb'],
+      appsCarteira: ['cbjjb'],
     );
 
     expect(
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('ativação textual antiga continua compatível', () {
-    final user = UserModel(ativacao: 'Ativo 2026');
+    const user = UserModel(ativacao: 'Ativo 2026');
 
     expect(
       CardAccessPolicy.evaluate(user, app: 'ibcjj', now: today).allowed,

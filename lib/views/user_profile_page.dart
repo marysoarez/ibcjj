@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:final_ibcjj/view_model/auth_view_model.dart';
-import 'package:final_ibcjj/views/certificates_page.dart';
+import 'package:ibcjj_flutter/view_model/auth_view_model.dart';
+import 'package:ibcjj_flutter/views/certificates_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -16,7 +16,7 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerWidget(),
-      appBar: AppBar(title: Text('Carteirinha do Atleta')),
+      appBar: AppBar(title: const Text('Carteirinha do Atleta')),
       body: SafeArea(
         child: Stack(
           children: [
@@ -29,13 +29,12 @@ class UserProfilePage extends StatelessWidget {
             Consumer<AuthViewModel>(
               builder: (context, viewModel, child) {
                 if (viewModel.user == null) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final user = viewModel.user!;
                 final imageBase64 = viewModel.profileImageBase64;
-                final access = viewModel.apiCardAccess ??
-                    CardAccessPolicy.evaluate(user, app: 'ibcjj');
+                final access = CardAccessPolicy.evaluate(user, app: 'ibcjj');
                 final isValid = access.allowed;
 
                 // if (isValid) {
@@ -49,38 +48,26 @@ class UserProfilePage extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.lock_outline,
+                          const Icon(Icons.lock_outline,
                               size: 80, color: Colors.grey),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Text(
                             access.message,
                             textAlign: TextAlign.center,
                             style:
-                                TextStyle(fontSize: 18, color: Colors.black87),
+                                const TextStyle(fontSize: 18, color: Colors.black87),
                           ),
-                          if (viewModel.apiErrorMessage != null) ...[
-                            SizedBox(height: 12),
-                            Text(
-                              'Usando os dados locais: '
-                              '${viewModel.apiErrorMessage}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CertificatesPage(),
+                                  builder: (context) => const CertificatesPage(),
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Clique aqui para regularizar',
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -96,22 +83,10 @@ class UserProfilePage extends StatelessWidget {
                 }
 
                 return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (viewModel.apiErrorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            'Usando a autorização local: '
-                            '${viewModel.apiErrorMessage}',
-                            style: const TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
                       Image.asset(
                         'lib/assets/images/logo.png',
                         width: 130,
@@ -143,13 +118,13 @@ class UserProfilePage extends StatelessWidget {
                                         }
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.all(5),
+                                        padding: const EdgeInsets.all(5),
                                         decoration: BoxDecoration(
                                           color: Colors.black
                                               .withValues(alpha: 0.5),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.edit,
                                           color: Colors.white,
                                           size: 20,
@@ -161,14 +136,14 @@ class UserProfilePage extends StatelessWidget {
                               )
                             : Column(
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Nenhuma imagem encontrada',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey,
                                     ),
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   ElevatedButton.icon(
                                     onPressed: () async {
                                       try {
@@ -178,13 +153,13 @@ class UserProfilePage extends StatelessWidget {
                                             'Erro ao adicionar imagem: $e');
                                       }
                                     },
-                                    icon: Icon(Icons.add_a_photo),
-                                    label: Text('Adicionar Foto'),
+                                    icon: const Icon(Icons.add_a_photo),
+                                    label: const Text('Adicionar Foto'),
                                   ),
                                 ],
                               ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       _buildInfoRow('Nome:', user.nome),
                       _buildInfoRow('Graduação:', user.graduacao),
                       _buildInfoRow('Faixa:', user.faixa),
@@ -193,8 +168,8 @@ class UserProfilePage extends StatelessWidget {
                       _buildInfoRow('Nascimento:', user.nascimento),
                       _buildInfoRow('Técnico:', user.tecnico),
                       _buildInfoRow('Equipe:', user.equipe),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 10),
+                      const Text(
                         'Ativado:',
                         style: TextStyle(
                           fontSize: 18,
@@ -206,11 +181,11 @@ class UserProfilePage extends StatelessWidget {
                         child: Card(
                           color: user.ativacao != null ? Colors.green : null,
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               access.message,
                               style:
-                                  TextStyle(fontSize: 18, color: Colors.black),
+                                  const TextStyle(fontSize: 18, color: Colors.black),
                             ),
                           ),
                         ),
@@ -232,12 +207,12 @@ class UserProfilePage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Text(value ?? '', style: TextStyle(fontSize: 16)),
+            child: Text(value ?? '', style: const TextStyle(fontSize: 16)),
           ),
         ),
       ],

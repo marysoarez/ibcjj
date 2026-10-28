@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:final_ibcjj/model/user_model.dart';
+import 'package:ibcjj_flutter/features/profile/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 typedef IdTokenProvider = Future<String?> Function();
@@ -115,24 +114,21 @@ class ApiUserProfile {
     );
   }
 
-  UserModel toUserModel() => UserModel(
-        uid: uid,
-        nome: nome,
-        email: email,
-        doc: doc,
-        equipe: equipe,
-        tecnico: tecnico,
-        nascimento: nascimento,
-        genero: genero,
-        peso: peso,
-        telefone: telefone,
-        faixa: faixa,
-        graduacao: graduacao,
-        ativacao: ativacao,
-        carteiraValidaAte: carteiraValidaAte,
-        acessoVitalicio: acessoVitalicio,
-        appsCarteira: appsCarteira,
-      );
+  UserModel toUserModel({String? profileImageUrl}) => UserModel.fromMap({
+        'uid': uid,
+        'nome': nome,
+        'email': email,
+        'equipe': equipe,
+        'tecnico': tecnico,
+        'nascimento': nascimento,
+        'genero': genero,
+        'peso': peso,
+        'telefone': telefone,
+        'faixa': faixa,
+        'graduacao': graduacao,
+        'ativacao': ativacao,
+        'profileImageUrl': profileImageUrl,
+      }, documentId: uid, fallbackEmail: email);
 }
 
 class ApiCardAccess {
@@ -235,8 +231,6 @@ class ApiClient {
       ).timeout(_timeout);
     } on TimeoutException {
       throw const ApiException('A API demorou para responder.');
-    } on SocketException {
-      throw const ApiException('Não foi possível conectar à API.');
     } on http.ClientException {
       throw const ApiException('Não foi possível conectar à API.');
     }

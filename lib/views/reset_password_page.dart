@@ -24,7 +24,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       try {
         await viewModel.resetPassword(_emailController.text.trim());
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
                 'Instruções de redefinição de senha enviadas para o seu email.')));
         Navigator.pop(context); // Volta para a tela anterior após o envio
@@ -42,7 +42,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Redefinir Senha'),
+        title: const Text('Redefinir Senha'),
       ),
       body: SafeArea(
         child: Padding(
@@ -53,7 +53,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               children: [
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -62,10 +62,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => _resetPassword(authViewModel),
-                  child: Text('Enviar Email de Redefinição'),
+                  child: const Text('Enviar Email de Redefinição'),
                 ),
               ],
             ),

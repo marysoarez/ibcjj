@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
-class DefaultFirebaseOptions {
+class   DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -31,7 +31,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
+              'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
         throw UnsupportedError(
@@ -42,52 +42,47 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAYRncx4IQ6UUL5Ic8Oi6L8Y0aWUR5_nn8',
-    appId: '1:322980762911:web:65b96856ede33289748c2a',
+    appId: '1:322980762911:web:6653493255e68163748c2a',
     messagingSenderId: '322980762911',
     projectId: 'ibcjj-fa960',
     authDomain: 'ibcjj-fa960.firebaseapp.com',
-    databaseURL: 'https://ibcjj-fa960-default-rtdb.firebaseio.com',
     storageBucket: 'ibcjj-fa960.appspot.com',
-    measurementId: 'G-47WHFM6YEW',
+    measurementId: 'G-WKYZYFXHDL',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyACcHEF4Er2UtVK2bO-XdPxsd9TsGMfJsY',
-    appId: '1:322980762911:android:ca07c3766fe093bb748c2a',
+    appId: '1:322980762911:android:5807afdbaaccd728748c2a',
     messagingSenderId: '322980762911',
     projectId: 'ibcjj-fa960',
-    databaseURL: 'https://ibcjj-fa960-default-rtdb.firebaseio.com',
     storageBucket: 'ibcjj-fa960.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAQXdpYoeCqFUL6yhCCTkpRvs_KaBtUL0w',
-    appId: '1:322980762911:ios:d151541bab23597c748c2a',
+    appId: '1:322980762911:ios:911a9bf085838544748c2a',
     messagingSenderId: '322980762911',
     projectId: 'ibcjj-fa960',
-    databaseURL: 'https://ibcjj-fa960-default-rtdb.firebaseio.com',
     storageBucket: 'ibcjj-fa960.appspot.com',
-    iosBundleId: 'com.marysoarez.finalIbcjj',
+    iosBundleId: 'com.marysoarez.ibcjjFlutter',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAQXdpYoeCqFUL6yhCCTkpRvs_KaBtUL0w',
-    appId: '1:322980762911:ios:d151541bab23597c748c2a',
+    appId: '1:322980762911:ios:911a9bf085838544748c2a',
     messagingSenderId: '322980762911',
     projectId: 'ibcjj-fa960',
-    databaseURL: 'https://ibcjj-fa960-default-rtdb.firebaseio.com',
     storageBucket: 'ibcjj-fa960.appspot.com',
-    iosBundleId: 'com.marysoarez.finalIbcjj',
+    iosBundleId: 'com.marysoarez.ibcjjFlutter',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB7ihpsL5bs6b-rEaxW79KC82fIoUcSs0g',
-    appId: '1:322980762911:web:f52fe19edd9eec50748c2a',
+    apiKey: 'AIzaSyAYRncx4IQ6UUL5Ic8Oi6L8Y0aWUR5_nn8',
+    appId: '1:322980762911:web:d450658bbc413734748c2a',
     messagingSenderId: '322980762911',
     projectId: 'ibcjj-fa960',
     authDomain: 'ibcjj-fa960.firebaseapp.com',
-    databaseURL: 'https://ibcjj-fa960-default-rtdb.firebaseio.com',
     storageBucket: 'ibcjj-fa960.appspot.com',
-    measurementId: 'G-R852P6SFZE',
+    measurementId: 'G-XZCX9YBN8K',
   );
 }

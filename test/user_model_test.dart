@@ -1,9 +1,9 @@
-import 'package:final_ibcjj/model/user_model.dart';
+import 'package:ibcjj_flutter/model/user_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('preserva os dados do usuário ao converter para mapa', () {
-    final user = UserModel(
+    const user = UserModel(
       uid: 'user-1',
       email: 'atleta@example.com',
       nome: 'Atleta',
@@ -17,7 +17,7 @@ void main() {
   });
 
   test('copyWith altera somente os campos informados', () {
-    final original = UserModel(uid: 'user-1', nome: 'Nome antigo');
+    const original = UserModel(uid: 'user-1', nome: 'Nome antigo');
     final updated = original.copyWith(nome: 'Nome novo');
 
     expect(updated.uid, original.uid);

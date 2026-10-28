@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:final_ibcjj/data/api/api_client.dart';
+import 'package:ibcjj_flutter/data/api/api_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';

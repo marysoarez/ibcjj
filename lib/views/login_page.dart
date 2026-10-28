@@ -1,5 +1,5 @@
-import 'package:final_ibcjj/views/register_page.dart';
-import 'package:final_ibcjj/views/reset_password_page.dart';
+import 'package:ibcjj_flutter/views/register_page.dart';
+import 'package:ibcjj_flutter/views/reset_password_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -119,14 +119,14 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => ResetPasswordPage()),
+                                  builder: (_) => const ResetPasswordPage()),
                             ),
                             child: const Text('Esqueci a senha'),
                           ),
                           TextButton(
                             onPressed: () => Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => RegisterPage()),
+                              MaterialPageRoute(builder: (_) => const RegisterPage()),
                             ),
                             child: const Text('Cadastrar-se'),
                           ),
