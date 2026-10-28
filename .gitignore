@@ -1,27 +1,24 @@
-# Miscellaneous
+# Miscellaneous and generated files
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IDE
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# Flutter/Dart
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -31,26 +28,40 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
+**/build/
+**/node_modules/
+**/.gradle/
+functions/node_modules/
 /android/app/debug
 /android/app/profile
 /android/app/release
+app.*.symbols
+app.*.map.json
 
-# Local backups may contain original signing credentials.
-/.local-backups/
-**/key.properties
-*.jks
-*.keystore
-*.p12
-*.pfx
+# Local machine configuration and environment secrets
 .env
 .env.*
 !.env.example
 **/local.properties
+**/key.properties
+
+# Firebase emulator state and service credentials
+.firebase/
+**/google-services.json
+**/GoogleService-Info.plist
+**/*service-account*.json
+**/*service_account*.json
+**/*serviceAccount*.json
+**/*firebase-adminsdk*.json
+**/*credential*.json
+
+# Signing keys and certificates
+**/*.jks
+**/*.keystore
+**/*.p12
+**/*.pfx
+**/*.pem
+**/*.key
+**/*.p8
+**/*.mobileprovision
+/.local-backups/

@@ -12,8 +12,13 @@ class UserProfilePage extends StatelessWidget {
     final user = model.user;
     final activation = user.ativacao?.toLowerCase() ?? '';
     // Existing validity policy is preserved; changing the year is a separate rule.
-    final isValid =
+    final localValid =
         activation.contains('2025') || activation.contains('vitalício');
+    final isValid = model.cardAccess?.allowed ?? localValid;
+    final accessMessage = model.cardAccess?.message ??
+        (localValid
+            ? user.ativacao ?? 'Carteirinha ativa'
+            : 'Carteirinha não ativada ou válida para o ano de 2025.');
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppBar(title: const Text('Carteirinha do Atleta')),
@@ -27,26 +32,38 @@ class UserProfilePage extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Text(model.error!,
                   style: const TextStyle(color: Colors.red))),
+        if (model.cardAccess?.error != null)
+          Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                  'Usando a autorização local: ${model.cardAccess!.error!}',
+                  style: const TextStyle(color: Colors.deepOrange))),
+        if (model.cardAccess?.warning != null)
+          Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(model.cardAccess!.warning!,
+                  style: const TextStyle(color: Colors.deepOrange))),
         Expanded(
             child: Stack(children: [
           Positioned.fill(
               child: Image.asset('lib/assets/images/background_ibcjj.jpg',
                   fit: BoxFit.cover)),
           if (!isValid)
-            const Center(
+            Center(
                 child: Padding(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.lock_outline, size: 80, color: Colors.grey),
-                    SizedBox(height: 20),
-                    Text(
-                        'Carteirinha não ativada ou válida para o ano de 2025.',
+                    const Icon(Icons.lock_outline,
+                        size: 80, color: Colors.grey),
+                    const SizedBox(height: 20),
+                    Text(accessMessage,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18, color: Colors.black87)),
-                    SizedBox(height: 20),
-                    Text('Clique aqui para regularizar',
+                        style: const TextStyle(
+                            fontSize: 18, color: Colors.black87)),
+                    const SizedBox(height: 20),
+                    const Text('Clique aqui para regularizar',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 18, color: Colors.black87)),
                   ]),
@@ -98,7 +115,7 @@ class UserProfilePage extends StatelessWidget {
                             color: Colors.green,
                             child: Padding(
                                 padding: const EdgeInsets.all(8),
-                                child: Text(user.ativacao ?? 'Não ativado',
+                                child: Text(accessMessage,
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.black))))),
                   ]),

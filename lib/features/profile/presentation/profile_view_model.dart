@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/errors/app_failure.dart';
+import '../data/profile_access_repository.dart';
 import '../data/profile_repository.dart';
 import '../models/user_model.dart';
 
@@ -10,7 +11,12 @@ class ProfileViewModel extends ChangeNotifier {
   String? error;
   String? message;
   bool _disposed = false;
-  ProfileViewModel(this._repository, this._user);
+  final ProfileCardAccess? cardAccess;
+  ProfileViewModel(this._repository, this._user)
+      : cardAccess = _repository is ProfileAccessRepository
+            ? (_repository as ProfileAccessRepository)
+                .cardAccessFor(_user.uid ?? '')
+            : null;
 
   UserModel get user => _user;
   String? get profileImageUrl => _user.profileImageUrl;

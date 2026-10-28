@@ -94,3 +94,17 @@ As validações, limites de imagem e integração WhatsApp estão descritos em
 Leia [o contrato de dados e sua compatibilidade](docs/user-data-contract.md).
 Os testes específicos de cadastro, leitura, foto e conversão podem ser executados
 com `flutter test --no-pub test/models test/repositories test/viewmodels`.
+
+## Integração REST
+
+A leitura de perfil e autorização da carteirinha pode ser habilitada no build com
+`--dart-define=API_BASE_URL=https://<host-da-api>`. O aplicativo acrescenta
+`/api/v1` ao endereço configurado e exige HTTPS fora de hosts locais. Para
+desenvolvimento, configure explicitamente `http://10.0.2.2:<porta>` no emulador
+Android ou `http://localhost:<porta>` no computador.
+
+Com a URL configurada, o app envia o Firebase ID token da sessão somente no
+cabeçalho `Authorization` para `GET /me` e
+`GET /me/card-access?app=ibcjj`. Se a API falhar, o perfil e a autorização locais
+do Firestore continuam disponíveis e a tela sinaliza o fallback. Cadastro,
+edição, fotos e certificados continuam nos repositórios Firebase existentes.

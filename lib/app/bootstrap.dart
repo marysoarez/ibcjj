@@ -4,8 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ibcjj_flutter/data/api/api_client.dart';
 import '../firebase_options.dart';
 import '../features/auth/data/firebase_auth_repository.dart';
+import '../features/profile/data/api_profile_repository.dart';
 import '../features/profile/data/firebase_profile_repository.dart';
 import '../features/certificates/data/firebase_certificates_repository.dart';
 import 'app.dart';
@@ -33,11 +35,16 @@ Widget _createApp() {
   final picker = ImagePicker();
   final auth = FirebaseAuth.instance;
   final sessionGuard = SessionGuard(() => auth.currentUser?.uid);
+  final apiClient = ApiClient.fromEnvironment(
+    getIdToken: () async => auth.currentUser?.getIdToken(),
+  );
   return IbcjjApp(
     authRepository: FirebaseAuthRepository(auth),
-    profileRepository: FirebaseProfileRepository(
-        FirebaseFirestore.instance, storage, picker,
-        sessionGuard: sessionGuard),
+    profileRepository: ApiProfileRepository(
+      FirebaseProfileRepository(FirebaseFirestore.instance, storage, picker,
+          sessionGuard: sessionGuard),
+      apiClient,
+    ),
     certificatesRepository: FirebaseCertificatesRepository(storage, picker,
         sessionGuard: sessionGuard),
   );
